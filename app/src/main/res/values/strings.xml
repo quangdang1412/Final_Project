@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Từ điển TFlat</string>
+    <string name="search_hint">Tra từ Anh Việt Anh</string>
+    <string name="translate_doc">Dịch văn bản</string>
+    <string name="ai_assistant">Trợ lý AI</string>
+    <string name="vip_package">Gói từ vựng VIP</string>
+    <string name="quiz">Quiz</string>
+    <string name="old_skg">Từ vựng SGK cũ</string>
+    <string name="new_skg">Từ vựng SGK mới</string>
+    <string name="exam_vocab">Từ vựng luyện thi</string>
+    <string name="your_words">Từ của bạn</string>
+    <string name="searched_words">Từ đã tra</string>
+    <string name="free_package">Gói từ vựng miễn phí</string>
+    <string name="irregular_verbs">Động từ bất quy tắc</string>
+    <string name="toeic_vocab">Từ vựng TOEIC</string>
+    <string name="ielts_vocab">Từ vựng IELTS</string>
+    <string name="toefl_vocab">Từ vựng TOEFL</string>
+    <string name="oxford_vocab">Từ vựng Oxford</string>
+    <string name="completion">Hoàn thành 0%</string>
+    <string name="english_software">Phần mềm học tiếng Anh</string>
+    <string name="settings">Cài đặt</string>
+</resources>

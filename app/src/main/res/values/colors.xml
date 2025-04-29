@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="background_dark">#121212</color>
+    <color name="dark_card">#1E1E1E</color>
+    <color name="blue_link">#3498db</color>
+    <color name="vip_gold">#FFD700</color>
+    <color name="purple_item">#9B59B6</color>
+    <color name="orange_item">#E67E22</color>
+    <color name="red_item">#E74C3C</color>
+    <color name="search_bar_bg">#333333</color>
+    <color name="text_secondary">#CCCCCC</color>
+</resources>
