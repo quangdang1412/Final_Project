@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/background_dark"
     android:fillViewport="true"
+    android:layout_marginTop="28dp"
+
     tools:context=".MainActivity">
 
     <LinearLayout
