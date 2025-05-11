@@ -32,7 +32,10 @@ android {
 }
 
 dependencies {
-
+    implementation ("org.projectlombok:lombok:1.18.30")
+    annotationProcessor ("org.projectlombok:lombok:1.18.30")
+    implementation("androidx.room:room-runtime:2.5.2")
+    annotationProcessor ("androidx.room:room-compiler:2.5.2")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
