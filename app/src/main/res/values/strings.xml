@@ -19,4 +19,14 @@
     <string name="completion">Hoàn thành 0%</string>
     <string name="english_software">Phần mềm học tiếng Anh</string>
     <string name="settings">Cài đặt</string>
+    
+    <!-- Translation Document Activity strings -->
+    <string name="input_text">Văn bản nguồn</string>
+    <string name="translation">Bản dịch</string>
+    <string name="enter_or_paste_text">Nhập hoặc dán văn bản tại đây...</string>
+    <string name="translation_result">Kết quả dịch sẽ hiển thị tại đây...</string>
+    <string name="english">Tiếng Anh</string>
+    <string name="vietnamese">Tiếng Việt</string>
+    <string name="translate">DỊCH</string>
+    <string name="translation_error">Không thể dịch văn bản. Vui lòng thử lại sau.</string>
 </resources>

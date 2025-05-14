@@ -2,6 +2,8 @@ package com.example.hcmute.quangvaphong.views;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.WindowInsets;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -25,6 +27,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().getDecorView().setOnApplyWindowInsetsListener((view, insets) -> {
+            View rootView = findViewById(android.R.id.content);
+            rootView.setPadding(
+                    insets.getInsets(WindowInsets.Type.systemBars()).left,
+                    insets.getInsets(WindowInsets.Type.systemBars()).top,
+                    insets.getInsets(WindowInsets.Type.systemBars()).right,
+                    insets.getInsets(WindowInsets.Type.systemBars()).bottom);
+            return insets;
+        });
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
@@ -44,6 +55,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setEvent() {
+        findViewById(R.id.translate_doc_card).setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, TranslateDocumentActivity.class);
+            startActivity(intent);
+        });
+
         toeicBtn.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, VocabularyActivity.class);
             intent.putExtra("type", "toeic");
@@ -84,8 +100,7 @@ public class MainActivity extends AppCompatActivity {
                         .pronunciation(pronunciation)
                         .meaning(meaning)
                         .isSave(false)
-                        .build()
-        );
+                        .build());
         List<VocabularyToeic> vocabularyToeicList = VocabularyLoader.loadVocabularyFromAssets(
                 getApplicationContext(),
                 "toeic.txt",
@@ -94,8 +109,7 @@ public class MainActivity extends AppCompatActivity {
                         .pronunciation(pronunciation)
                         .meaning(meaning)
                         .isSave(false)
-                        .build()
-        );
+                        .build());
         List<VocabularyIelts> vocabularyIeltsList = VocabularyLoader.loadVocabularyFromAssets(
                 getApplicationContext(),
                 "ielts.txt",
@@ -104,8 +118,7 @@ public class MainActivity extends AppCompatActivity {
                         .pronunciation(pronunciation)
                         .meaning(meaning)
                         .isSave(false)
-                        .build()
-        );
+                        .build());
 
         List<VocabularyOxford> vocabularyOxfordList = VocabularyLoader.loadVocabularyFromAssets(
                 getApplicationContext(),
@@ -115,9 +128,9 @@ public class MainActivity extends AppCompatActivity {
                         .pronunciation(pronunciation)
                         .meaning(meaning)
                         .isSave(false)
-                        .build()
-        );
-        List<IrregularVerb> irregularVerbList = VocabularyLoader.loadIrregularVerbFromAssets(getApplicationContext(), "irregverbs.txt");
+                        .build());
+        List<IrregularVerb> irregularVerbList = VocabularyLoader.loadIrregularVerbFromAssets(getApplicationContext(),
+                "irregverbs.txt");
         if (vocabularyToeicList != null && !vocabularyToeicList.isEmpty()) {
             repository.insertListVocabularyToeic(vocabularyToeicList);
             repository.insertListVocabularyToefl(toeflList);
