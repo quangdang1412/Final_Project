@@ -21,15 +21,14 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.hcmute.quangvaphong.R;
-import com.example.hcmute.quangvaphong.models.TranslationResponse;
-import com.google.gson.Gson;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.mlkit.common.model.DownloadConditions;
+import com.google.mlkit.nl.translate.TranslateLanguage;
+import com.google.mlkit.nl.translate.Translation;
+import com.google.mlkit.nl.translate.Translator;
+import com.google.mlkit.nl.translate.TranslatorOptions;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.text.Text;
 import com.google.mlkit.vision.text.TextRecognition;
@@ -38,10 +37,10 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TranslateDocumentActivity extends AppCompatActivity {
 
@@ -59,6 +58,8 @@ public class TranslateDocumentActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> cameraLauncher;
     private ActivityResultLauncher<Intent> galleryLauncher;
     private TextRecognizer textRecognizer;
+
+    private Map<String, Translator> translators = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +84,6 @@ public class TranslateDocumentActivity extends AppCompatActivity {
                         Bundle extras = result.getData().getExtras();
                         Bitmap imageBitmap = (Bitmap) extras.get("data");
                         if (imageBitmap != null) {
-                            // Process image directly with OCR
                             processImageForOcr(imageBitmap);
                         }
                     }
@@ -95,7 +95,6 @@ public class TranslateDocumentActivity extends AppCompatActivity {
                         Uri selectedImageUri = result.getData().getData();
                         if (selectedImageUri != null) {
                             try {
-                                // Process the gallery image directly with OCR
                                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(
                                         this.getContentResolver(), selectedImageUri);
                                 processImageForOcr(bitmap);
@@ -135,15 +134,15 @@ public class TranslateDocumentActivity extends AppCompatActivity {
                 Toast.makeText(this, "Please enter text to translate", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            String sourceLang = sourceLanguage.getText().toString();
-            String targetLang = null;
-            if (sourceLang.equals("Tiếng Việt")) {
-                sourceLang = "vi";
-                targetLang = "en";
+            String sourceText = sourceLanguage.getText().toString();
+            final String sourceLang;
+            final String targetLang;
+            if (sourceText.equals("Tiếng Việt")) {
+                sourceLang = TranslateLanguage.VIETNAMESE;
+                targetLang = TranslateLanguage.ENGLISH;
             } else {
-                sourceLang = "en";
-                targetLang = "vi";
+                sourceLang = TranslateLanguage.ENGLISH;
+                targetLang = TranslateLanguage.VIETNAMESE;
             }
 
             translateText(text, sourceLang, targetLang);
@@ -159,7 +158,6 @@ public class TranslateDocumentActivity extends AppCompatActivity {
         }
     }
 
-    // Open camera app
     private void openCamera() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntent.resolveActivity(getPackageManager()) != null) {
@@ -209,10 +207,8 @@ public class TranslateDocumentActivity extends AppCompatActivity {
     }
 
     private void processImageForOcr(Bitmap bitmap) {
-        // Show processing message
         Toast.makeText(this, "Processing image, please wait...", Toast.LENGTH_SHORT).show();
 
-        // Clear previous text and disable translation button during processing
         inputText.setText("");
         translateButton.setEnabled(false);
 
@@ -226,14 +222,15 @@ public class TranslateDocumentActivity extends AppCompatActivity {
                         translateButton.setEnabled(true);
                     } else {
                         inputText.setText(recognizedText);
-                        String sourceLang = sourceLanguage.getText().toString();
-                        String targetLang;
-                        if (sourceLang.equals("Tiếng Việt")) {
-                            sourceLang = "vi";
-                            targetLang = "en";
+                        String sourceText = sourceLanguage.getText().toString();
+                        final String sourceLang;
+                        final String targetLang;
+                        if (sourceText.equals("Tiếng Việt")) {
+                            sourceLang = TranslateLanguage.VIETNAMESE;
+                            targetLang = TranslateLanguage.ENGLISH;
                         } else {
-                            sourceLang = "en";
-                            targetLang = "vi";
+                            sourceLang = TranslateLanguage.ENGLISH;
+                            targetLang = TranslateLanguage.VIETNAMESE;
                         }
                         translateText(recognizedText, sourceLang, targetLang);
                     }
@@ -249,181 +246,85 @@ public class TranslateDocumentActivity extends AppCompatActivity {
         translateButton.setEnabled(false);
         outputText.setText("");
 
-        final int MAX_CHUNK_SIZE = 450;
+        String translatorKey = sourceLang + "-" + targetLang;
+        Translator translator = translators.get(translatorKey);
 
-        if (text.length() <= MAX_CHUNK_SIZE) {
-            translateTextChunk(text, sourceLang, targetLang, true);
+        if (translator == null) {
+            TranslatorOptions options = new TranslatorOptions.Builder()
+                    .setSourceLanguage(sourceLang)
+                    .setTargetLanguage(targetLang)
+                    .build();
+
+            translator = Translation.getClient(options);
+            translators.put(translatorKey, translator);
+            DownloadConditions conditions = new DownloadConditions.Builder()
+                    .build();
+
+            final Translator finalTranslator = translator;
+            final String finalText = text;
+
+            translator.downloadModelIfNeeded(conditions)
+                    .addOnSuccessListener(unused -> {
+                        Toast.makeText(TranslateDocumentActivity.this,
+                                "Model downloaded successfully", Toast.LENGTH_SHORT).show();
+                        performTranslation(finalTranslator, finalText);
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(TranslateDocumentActivity.this,
+                                "Failed to download language model: " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                        translateButton.setEnabled(true);
+                    });
         } else {
-            List<String> chunks = splitIntoChunks(text, MAX_CHUNK_SIZE);
-            final StringBuilder completeTranslation = new StringBuilder();
-            final int[] chunkCounter = { 0 };
-
-            Toast.makeText(TranslateDocumentActivity.this,
-                    "Text is long, splitting into " + chunks.size() + " parts for translation",
-                    Toast.LENGTH_SHORT).show();
-
-            processNextChunk(chunks, sourceLang, targetLang, completeTranslation, chunkCounter);
+            performTranslation(translator, text);
         }
     }
 
-    private void processNextChunk(List<String> chunks, String sourceLang, String targetLang,
-            StringBuilder completeTranslation, int[] chunkCounter) {
-        if (chunkCounter[0] < chunks.size()) {
-            String chunk = chunks.get(chunkCounter[0]);
-            boolean isLastChunk = (chunkCounter[0] == chunks.size() - 1);
+    private void performTranslation(Translator translator, String text) {
+        Toast.makeText(this, "Translating text...", Toast.LENGTH_SHORT).show();
 
-            translateTextChunk(chunk, sourceLang, targetLang, isLastChunk, new TranslationCallback() {
-                @Override
-                public void onTranslationComplete(String translatedChunk) {
-                    completeTranslation.append(translatedChunk).append(" ");
-                    outputText.setText(completeTranslation.toString().trim());
-
-                    chunkCounter[0]++;
-                    processNextChunk(chunks, sourceLang, targetLang, completeTranslation, chunkCounter);
-                }
-
-                @Override
-                public void onTranslationError(String errorMessage) {
+        translator.translate(text)
+                .addOnSuccessListener(translatedText -> {
+                    outputText.setText(translatedText);
+                    translateButton.setEnabled(true);
+                })
+                .addOnFailureListener(e -> {
                     Toast.makeText(TranslateDocumentActivity.this,
-                            "Error in chunk " + (chunkCounter[0] + 1) + ": " + errorMessage,
+                            "Translation error: " + e.getMessage() + ". Trying to fix...",
                             Toast.LENGTH_SHORT).show();
 
-                    chunkCounter[0]++;
-                    processNextChunk(chunks, sourceLang, targetLang, completeTranslation, chunkCounter);
-                }
-            });
-        } else {
-            translateButton.setEnabled(true);
-        }
-    }
-
-    private interface TranslationCallback {
-        void onTranslationComplete(String translatedText);
-
-        void onTranslationError(String errorMessage);
-    }
-
-    private void translateTextChunk(String text, String sourceLang, String targetLang, boolean isLastChunk) {
-        translateTextChunk(text, sourceLang, targetLang, isLastChunk, null);
-    }
-
-    private void translateTextChunk(String text, String sourceLang, String targetLang,
-            boolean isLastChunk, TranslationCallback callback) {
-        try {
-            String encodedText = URLEncoder.encode(text, "UTF-8");
-
-            String url = "https://api.mymemory.translated.net/get?q=" + encodedText +
-                    "&langpair=" + sourceLang + "|" + targetLang;
-
-            RequestQueue queue = Volley.newRequestQueue(this);
-
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                Gson gson = new Gson();
-                                TranslationResponse translationResponse = gson.fromJson(response,
-                                        TranslationResponse.class);
-
-                                if (translationResponse != null && translationResponse.getResponseData() != null) {
-                                    String translatedText = translationResponse.getResponseData().getTranslatedText();
-
-                                    if (callback != null) {
-                                        callback.onTranslationComplete(translatedText);
-                                    } else {
-                                        outputText.setText(translatedText);
-                                        if (isLastChunk) {
+                    DownloadConditions conditions = new DownloadConditions.Builder().build();
+                    translator.downloadModelIfNeeded(conditions)
+                            .addOnSuccessListener(unused -> {
+                                translator.translate(text)
+                                        .addOnSuccessListener(translatedText -> {
+                                            outputText.setText(translatedText);
                                             translateButton.setEnabled(true);
-                                        }
-                                    }
-                                } else {
-                                    if (callback != null) {
-                                        callback.onTranslationError("Translation failed");
-                                    } else {
-                                        Toast.makeText(TranslateDocumentActivity.this,
-                                                "Translation failed. Please try again.",
-                                                Toast.LENGTH_SHORT).show();
-                                        outputText.setText(R.string.translation_error);
-                                        if (isLastChunk) {
+                                        })
+                                        .addOnFailureListener(e2 -> {
+                                            Toast.makeText(TranslateDocumentActivity.this,
+                                                    "Translation failed: " + e2.getMessage(),
+                                                    Toast.LENGTH_SHORT).show();
+                                            outputText.setText(R.string.translation_error);
                                             translateButton.setEnabled(true);
-                                        }
-                                    }
-                                }
-                            } catch (Exception e) {
-                                if (callback != null) {
-                                    callback.onTranslationError(e.getMessage());
-                                } else {
-                                    Toast.makeText(TranslateDocumentActivity.this,
-                                            "Error parsing response: " + e.getMessage(),
-                                            Toast.LENGTH_SHORT).show();
-                                    outputText.setText(R.string.translation_error);
-                                    if (isLastChunk) {
-                                        translateButton.setEnabled(true);
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(TranslateDocumentActivity.this,
-                                    "Network error: " + error.getMessage(),
-                                    Toast.LENGTH_SHORT).show();
-                            outputText.setText(R.string.translation_error);
-
-                            translateButton.setEnabled(true);
-                        }
-                    });
-
-            queue.add(stringRequest);
-
-        } catch (UnsupportedEncodingException e) {
-            Toast.makeText(this, "Error encoding text: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            translateButton.setEnabled(true);
-        }
+                                        });
+                            })
+                            .addOnFailureListener(e2 -> {
+                                Toast.makeText(TranslateDocumentActivity.this,
+                                        "Failed to recover: " + e2.getMessage(),
+                                        Toast.LENGTH_SHORT).show();
+                                outputText.setText(R.string.translation_error);
+                                translateButton.setEnabled(true);
+                            });
+                });
     }
 
-    private List<String> splitIntoChunks(String text, int maxChunkSize) {
-        List<String> chunks = new ArrayList<>();
-
-        if (text.length() <= maxChunkSize) {
-            chunks.add(text);
-            return chunks;
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        for (Translator translator : translators.values()) {
+            translator.close();
         }
-
-        String[] sentences = text.split("(?<=[.!?\\n])\\s+");
-        StringBuilder currentChunk = new StringBuilder();
-
-        for (String sentence : sentences) {
-            if (currentChunk.length() + sentence.length() > maxChunkSize && currentChunk.length() > 0) {
-                chunks.add(currentChunk.toString().trim());
-                currentChunk = new StringBuilder(sentence);
-            } else {
-                if (currentChunk.length() > 0) {
-                    currentChunk.append(" ");
-                }
-                currentChunk.append(sentence);
-            }
-        }
-
-        if (currentChunk.length() > 0) {
-            chunks.add(currentChunk.toString().trim());
-        }
-
-        List<String> finalChunks = new ArrayList<>();
-        for (String chunk : chunks) {
-            if (chunk.length() <= maxChunkSize) {
-                finalChunks.add(chunk);
-            } else {
-                for (int i = 0; i < chunk.length(); i += maxChunkSize) {
-                    int end = Math.min(i + maxChunkSize, chunk.length());
-                    finalChunks.add(chunk.substring(i, end));
-                }
-            }
-        }
-
-        return finalChunks;
+        translators.clear();
     }
 }
