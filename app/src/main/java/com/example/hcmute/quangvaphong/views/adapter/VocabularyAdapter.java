@@ -5,9 +5,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hcmute.quangvaphong.R;
@@ -19,9 +19,15 @@ import java.util.List;
 public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.VocabViewHolder> {
     private List<Vocabulary> vocabList = null;
     private List<IrregularVerb> irregularVerbList = null;
+    private VocabularyViewModel viewModel;
+    private String type;
+    private LifecycleOwner lifecycleOwner;
     private boolean isIrregularVerbMode = false;
 
-    public VocabularyAdapter() {
+    public VocabularyAdapter(VocabularyViewModel viewModel, String type, LifecycleOwner lifecycleOwner) {
+        this.viewModel = viewModel;
+        this.type = type;
+        this.lifecycleOwner = lifecycleOwner;
     }
 
     public void setVocabularyList(List<Vocabulary> vocabList) {
@@ -45,6 +51,18 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
         return new VocabViewHolder(view);
     }
 
+    public interface OnStarClickListener {
+        void onStarClick(Vocabulary vocab, int position);
+
+        void onStarClick(IrregularVerb vocab, int position);
+    }
+
+    private OnStarClickListener starClickListener;
+
+    public void setOnStarClickListener(OnStarClickListener listener) {
+        this.starClickListener = listener;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull VocabViewHolder holder, int position) {
         if (!isIrregularVerbMode && vocabList != null) {
@@ -52,7 +70,7 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
             holder.wordText.setText(vocab.getWord());
             holder.pronunciationText.setText(vocab.getPronunciation());
             holder.meaningText.setText(vocab.getMeaning());
-            
+
             holder.wordV2Text.setVisibility(View.GONE);
             holder.wordV3Text.setVisibility(View.GONE);
         } else if (isIrregularVerbMode && irregularVerbList != null) {
@@ -66,10 +84,26 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
             holder.wordV2Text.setVisibility(View.VISIBLE);
             holder.wordV3Text.setVisibility(View.VISIBLE);
         }
+        boolean saved = false;
+        if (!isIrregularVerbMode && vocabList != null) {
+            saved = vocabList.get(position).getIsSave();
+        } else if (isIrregularVerbMode && irregularVerbList != null) {
+            saved = irregularVerbList.get(position).getIsSave();
+        }
 
-        holder.starIcon.setOnClickListener(v ->
-                Toast.makeText(holder.itemView.getContext(), "Đã thêm vào yêu thích", Toast.LENGTH_SHORT).show()
-        );
+        if (saved) {
+            holder.starIcon.setImageResource(android.R.drawable.btn_star_big_on);
+        } else {
+            holder.starIcon.setImageResource(android.R.drawable.btn_star_big_off);
+        }
+
+        holder.starIcon.setOnClickListener(v -> {
+            if (!isIrregularVerbMode && vocabList != null) {
+                starClickListener.onStarClick(vocabList.get(position), position);
+            } else if (isIrregularVerbMode && irregularVerbList != null) {
+                starClickListener.onStarClick(irregularVerbList.get(position), position);
+            }
+        });
     }
 
     @Override
@@ -97,5 +131,6 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
             starIcon = itemView.findViewById(R.id.star_icon);
         }
     }
+
 }
 

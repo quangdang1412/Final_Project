@@ -19,7 +19,7 @@
     <string name="completion">Hoàn thành 0%</string>
     <string name="english_software">Phần mềm học tiếng Anh</string>
     <string name="settings">Cài đặt</string>
-    
+
     <!-- Translation Document Activity strings -->
     <string name="input_text">Văn bản nguồn</string>
     <string name="translation">Bản dịch</string>

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.example.hcmute.quangvaphong.models.VocabularyToeic;
 
@@ -12,8 +13,8 @@ import java.util.List;
 @Dao
 public interface VocabularyDao {
 
-    @Insert
-    void insertVocabulary(VocabularyToeic vocabularyToeic);
+    @Update
+    void insertVocabularyToeic(VocabularyToeic vocabularyToeic);
 
     @Insert
     void insertListVocabularyToeic(List<VocabularyToeic> vocabularyToeic);
@@ -23,4 +24,7 @@ public interface VocabularyDao {
 
     @Query("SELECT * FROM vocabulary_toeic WHERE IsSave==1")
     List<VocabularyToeic> getSavedVocabularyToeic();
+
+    @Query("SELECT * FROM vocabulary_toeic WHERE word = :word LIMIT 1")
+    LiveData<VocabularyToeic> getByWord(String word);
 }

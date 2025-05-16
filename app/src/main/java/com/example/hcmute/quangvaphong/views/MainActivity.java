@@ -2,12 +2,10 @@ package com.example.hcmute.quangvaphong.views;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.WindowInsets;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import com.example.hcmute.quangvaphong.R;
 import com.example.hcmute.quangvaphong.models.IrregularVerb;
@@ -23,20 +21,11 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private TextView toeicBtn, toeflBtn, ieltsBtn, irreBtn, oxfordBtn;
+    private CardView yourWord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().getDecorView().setOnApplyWindowInsetsListener((view, insets) -> {
-            View rootView = findViewById(android.R.id.content);
-            rootView.setPadding(
-                    insets.getInsets(WindowInsets.Type.systemBars()).left,
-                    insets.getInsets(WindowInsets.Type.systemBars()).top,
-                    insets.getInsets(WindowInsets.Type.systemBars()).right,
-                    insets.getInsets(WindowInsets.Type.systemBars()).bottom);
-            return insets;
-        });
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
         toeicBtn = findViewById(R.id.toeic_vocab_text);
@@ -44,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         ieltsBtn = findViewById(R.id.ielts_vocab_text);
         oxfordBtn = findViewById(R.id.oxford_vocab_text);
         irreBtn = findViewById(R.id.irregular_verbs_text);
+        yourWord = findViewById(R.id.your_words_card);
         setEvent();
 
         if (PrefsUtil.isFirstRun(this)) {
@@ -59,7 +49,11 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, TranslateDocumentActivity.class);
             startActivity(intent);
         });
-
+        yourWord.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, StudiedVocabularyActivity.class);
+            intent.putExtra("type", "yourword");
+            startActivity(intent);
+        });
         toeicBtn.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, VocabularyActivity.class);
             intent.putExtra("type", "toeic");
