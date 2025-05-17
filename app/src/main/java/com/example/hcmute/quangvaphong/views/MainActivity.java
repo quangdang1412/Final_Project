@@ -2,6 +2,7 @@ package com.example.hcmute.quangvaphong.views;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
@@ -23,7 +24,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private TextView toeicBtn, toeflBtn, ieltsBtn, irreBtn, oxfordBtn;
-    private CardView yourWord,quiz;
+    private CardView yourWord, quiz;
     private AutoCompleteTextView searchInput;
 
     @Override
@@ -68,9 +69,13 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 searchInput.setOnClickListener(v -> searchInput.showDropDown());
-
                 searchInput.setOnItemClickListener((parent, view, position, id) -> {
                     String selectedWord = (String) parent.getItemAtPosition(position);
+                    Log.d(selectedWord, "Selected word: " + selectedWord);
+
+                    Intent intent = new Intent(MainActivity.this, DictionaryActivity.class);
+                    intent.putExtra("word", selectedWord);
+                    startActivity(intent);
                 });
             });
         }).start();
