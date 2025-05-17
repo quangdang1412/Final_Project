@@ -14,7 +14,8 @@ import java.util.List;
 
 public class VocabularyLoader {
 
-    public static <T extends Vocabulary> List<T> loadVocabularyFromAssets(Context context, String fileName, VocabularyFactory<T> factory) {
+    public static <T extends Vocabulary> List<T> loadVocabularyFromAssets(Context context, String fileName,
+            VocabularyFactory<T> factory) {
         List<T> vocabularyList = new ArrayList<>();
         AssetManager assetManager = context.getAssets();
 
@@ -64,16 +65,39 @@ public class VocabularyLoader {
         return vocabularyList;
     }
 
+    public static List<String> loadEnglishWordsFromAssets(Context context) {
+        List<String> wordsList = new ArrayList<>();
+        AssetManager assetManager = context.getAssets();
+
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(assetManager.open("wordsEnNew.txt")));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Skip comments or empty lines
+                if (!line.trim().isEmpty() && !line.startsWith("//")) {
+                    wordsList.add(line.trim());
+                }
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return wordsList;
+    }
+
     private static IrregularVerb parseLine(String line) {
         String[] parts = line.split("#");
-        if (parts.length != 3) return null;
+        if (parts.length != 3)
+            return null;
 
         String formsPart = parts[0].trim();
         String pronunciation = parts[1].trim();
         String meaning = parts[2].trim();
 
         String[] verbForms = formsPart.split("\t");
-        if (verbForms.length != 3) return null;
+        if (verbForms.length != 3)
+            return null;
 
         String baseForm = verbForms[0].trim();
         String pastSimple = verbForms[1].trim();
@@ -88,4 +112,3 @@ public class VocabularyLoader {
                 .isSave(false).build();
     }
 }
-
