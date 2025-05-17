@@ -24,7 +24,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private TextView toeicBtn, toeflBtn, ieltsBtn, irreBtn, oxfordBtn;
-    private CardView yourWord, quiz;
+    private CardView yourWord, quiz, chatbot;
     private AutoCompleteTextView searchInput;
 
     @Override
@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         irreBtn = findViewById(R.id.irregular_verbs_text);
         yourWord = findViewById(R.id.your_words_card);
         quiz = findViewById(R.id.quiz_card);
+        chatbot = findViewById(R.id.ai_assistant_card);
         setupSearchAutoComplete();
         setEvent();
 
@@ -86,6 +87,12 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, TranslateDocumentActivity.class);
             startActivity(intent);
         });
+
+        chatbot.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+            startActivity(intent);
+        });
+
         yourWord.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, StudiedVocabularyActivity.class);
             intent.putExtra("type", "yourword");
