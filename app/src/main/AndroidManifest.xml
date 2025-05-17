@@ -29,6 +29,10 @@
         android:theme="@style/Theme.Final_Project"
         tools:targetApi="31">
         <activity
+            android:name=".views.DictionaryActivity"
+            android:exported="false"
+            android:parentActivityName=".views.MainActivity" />
+        <activity
             android:name=".views.ListQuizActivity"
             android:exported="false" />
         <activity
