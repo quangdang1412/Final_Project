@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hcmute.quangvaphong.R;
 import com.example.hcmute.quangvaphong.models.IrregularVerb;
 import com.example.hcmute.quangvaphong.models.Vocabulary;
+import com.example.hcmute.quangvaphong.views.viewModel.VocabularyViewModel;
 
 import java.util.List;
 

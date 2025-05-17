@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
-import androidx.room.Room;
 
 import com.example.hcmute.quangvaphong.dao.IrregularVerbDao;
 import com.example.hcmute.quangvaphong.dao.StudiedVocabularyDao;
@@ -34,7 +33,7 @@ public class VocabularyRepository {
 
 
     public VocabularyRepository(Context context) {
-        AppDatabase database = Room.databaseBuilder(context, AppDatabase.class, "vocabulary_database").fallbackToDestructiveMigration().build();
+        AppDatabase database = AppDatabase.getDatabase(context);
         vocabularyDao = database.vocabularyDao();
         vocabularyToeflDao = database.vocabularyToeflDao();
         vocabularyIeltsDao = database.vocabularyIeltsDao();
@@ -163,4 +162,6 @@ public class VocabularyRepository {
     public LiveData<VocabularyIelts> getVocabularyIeltsByWord(String word) {
         return vocabularyIeltsDao.getByWord(word);
     }
+
+
 }

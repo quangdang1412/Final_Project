@@ -23,7 +23,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private TextView toeicBtn, toeflBtn, ieltsBtn, irreBtn, oxfordBtn;
-    private CardView yourWord;
+    private CardView yourWord,quiz;
     private AutoCompleteTextView searchInput;
 
     @Override
@@ -38,9 +38,6 @@ public class MainActivity extends AppCompatActivity {
         oxfordBtn = findViewById(R.id.oxford_vocab_text);
         irreBtn = findViewById(R.id.irregular_verbs_text);
         yourWord = findViewById(R.id.your_words_card);
-
-        setupSearchAutoComplete();
-
         setEvent();
 
         if (PrefsUtil.isFirstRun(this)) {
@@ -87,6 +84,12 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("type", "yourword");
             startActivity(intent);
         });
+
+        quiz.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, ListQuizActivity.class);
+            startActivity(intent);
+        });
+
         toeicBtn.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, VocabularyActivity.class);
             intent.putExtra("type", "toeic");

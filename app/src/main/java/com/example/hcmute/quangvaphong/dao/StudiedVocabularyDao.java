@@ -22,6 +22,9 @@ public interface StudiedVocabularyDao {
     @Query("SELECT * FROM studied_vocabulary")
     LiveData<List<StudiedVocabulary>> getAllStudiedVocabulary();
 
+    @Query("SELECT * FROM studied_vocabulary")
+    List<StudiedVocabulary> getAllStudiedVocabularyDirect();
+
     @Query("SELECT * FROM studied_vocabulary WHERE word = :word LIMIT 1")
     LiveData<StudiedVocabulary> getByWord(String word);
 }

@@ -16,7 +16,7 @@ import com.example.hcmute.quangvaphong.models.IrregularVerb;
 import com.example.hcmute.quangvaphong.models.StudiedVocabulary;
 import com.example.hcmute.quangvaphong.models.Vocabulary;
 import com.example.hcmute.quangvaphong.views.adapter.VocabularyAdapter;
-import com.example.hcmute.quangvaphong.views.adapter.VocabularyViewModel;
+import com.example.hcmute.quangvaphong.views.viewModel.VocabularyViewModel;
 
 import java.util.ArrayList;
 import java.util.List;

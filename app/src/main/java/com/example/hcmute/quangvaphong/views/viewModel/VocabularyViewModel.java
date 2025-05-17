@@ -1,4 +1,4 @@
-package com.example.hcmute.quangvaphong.views.adapter;
+package com.example.hcmute.quangvaphong.views.viewModel;
 
 import android.app.Application;
 import android.util.Log;
@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.example.hcmute.quangvaphong.models.IrregularVerb;
+import com.example.hcmute.quangvaphong.models.Question;
 import com.example.hcmute.quangvaphong.models.StudiedVocabulary;
 import com.example.hcmute.quangvaphong.models.Vocabulary;
 import com.example.hcmute.quangvaphong.models.VocabularyIelts;
@@ -26,6 +27,7 @@ public class VocabularyViewModel extends AndroidViewModel {
     private LiveData<List<VocabularyOxford>> oxfordList;
     private LiveData<List<IrregularVerb>> irregularVerbList;
     private LiveData<List<StudiedVocabulary>> studiedVocabList;
+    private List<Question> quizResults;
 
     public VocabularyViewModel(@NonNull Application application) {
         super(application);
@@ -102,4 +104,11 @@ public class VocabularyViewModel extends AndroidViewModel {
         return studiedVocabList;
     }
 
+    public void setQuizResults(List<Question> results) {
+        this.quizResults = results;
+    }
+
+    public List<Question> getQuizResults() {
+        return quizResults;
+    }
 }
