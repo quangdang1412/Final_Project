@@ -2,11 +2,16 @@ package com.example.hcmute.quangvaphong.views;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -20,19 +25,40 @@ import com.example.hcmute.quangvaphong.repository.VocabularyRepository;
 import com.example.hcmute.quangvaphong.utils.PrefsUtil;
 import com.example.hcmute.quangvaphong.utils.VocabularyLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private TextView toeicBtn, toeflBtn, ieltsBtn, irreBtn, oxfordBtn;
     private CardView yourWord, quiz;
     private AutoCompleteTextView searchInput;
+    private ImageView voiceIcon;
+    private ActivityResultLauncher<Intent> speechRecognitionLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        speechRecognitionLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        ArrayList<String> matches = result.getData()
+                                .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                        if (matches != null && !matches.isEmpty()) {
+                            String recognizedText = matches.get(0);
+                            searchInput.setText(recognizedText);
+
+                            Intent intent = new Intent(MainActivity.this, DictionaryActivity.class);
+                            intent.putExtra("word", recognizedText);
+                            startActivity(intent);
+                        }
+                    }
+                });
+
         searchInput = findViewById(R.id.search_input);
+        voiceIcon = findViewById(R.id.voice_icon);
         toeicBtn = findViewById(R.id.toeic_vocab_text);
         toeflBtn = findViewById(R.id.toefl_vocab_text);
         ieltsBtn = findViewById(R.id.ielts_vocab_text);
@@ -82,6 +108,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setEvent() {
+        voiceIcon.setOnClickListener(view -> {
+            startSpeechRecognition();
+        });
+
         findViewById(R.id.translate_doc_card).setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, TranslateDocumentActivity.class);
             startActivity(intent);
@@ -126,6 +156,16 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("type", "irre");
             startActivity(intent);
         });
+    }
+
+    private void startSpeechRecognition() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US");
+        intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Nói từ bạn muốn tìm kiếm");
+
+        speechRecognitionLauncher.launch(intent);
     }
 
     private void loadDataFromFile(VocabularyRepository repository) {
