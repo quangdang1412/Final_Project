@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         oxfordBtn = findViewById(R.id.oxford_vocab_text);
         irreBtn = findViewById(R.id.irregular_verbs_text);
         yourWord = findViewById(R.id.your_words_card);
+        quiz = findViewById(R.id.quiz_card);
+        setupSearchAutoComplete();
         setEvent();
 
         if (PrefsUtil.isFirstRun(this)) {
