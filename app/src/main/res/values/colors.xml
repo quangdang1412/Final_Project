@@ -34,4 +34,6 @@
     <color name="green_dark">#227302</color>
     <color name="red_light">#F7C9C1</color>
     <color name="red_dark">#A41901</color>
+    <color name="chat_color_receiver">#2987D4</color>
+    <color name="chat_color_sender">#E0E0E0</color>
 </resources>
