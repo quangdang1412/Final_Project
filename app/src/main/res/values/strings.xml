@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Từ điển TFlat</string>
-    <string name="search_hint">Tra từ Anh Việt Anh</string>
+    <string name="search_hint">Tra từ Anh Việt </string>
     <string name="translate_doc">Dịch văn bản</string>
     <string name="ai_assistant">Trợ lý AI</string>
     <string name="vip_package">Gói từ vựng VIP</string>
