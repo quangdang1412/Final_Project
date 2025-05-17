@@ -42,12 +42,6 @@
                 android:maxLines="1"
                 android:inputType="text" />
 
-            <ImageView
-                android:id="@+id/voice_icon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_btn_speak_now"
-                />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
     <androidx.recyclerview.widget.RecyclerView

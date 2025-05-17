@@ -2,6 +2,8 @@ package com.example.hcmute.quangvaphong.views;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -39,6 +41,26 @@ public class VocabularyActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
+        EditText searchText = findViewById(R.id.search_input);
+
+        searchText.addTextChangedListener(new android.text.TextWatcher() {
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+
+        });
 
         ImageView backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> finish());
@@ -74,7 +96,6 @@ public class VocabularyActivity extends AppCompatActivity {
                 List<IrregularVerb> vocabList = new ArrayList<>(toeicList);
                 adapter.setIrregularVerbList(vocabList);
             });
-
 
         adapter.setOnStarClickListener(new VocabularyAdapter.OnStarClickListener() {
             @Override

@@ -3,6 +3,8 @@ package com.example.hcmute.quangvaphong.views.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,11 +17,14 @@ import com.example.hcmute.quangvaphong.models.IrregularVerb;
 import com.example.hcmute.quangvaphong.models.Vocabulary;
 import com.example.hcmute.quangvaphong.views.viewModel.VocabularyViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.VocabViewHolder> {
+public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.VocabViewHolder> implements Filterable {
     private List<Vocabulary> vocabList = null;
+    private List<Vocabulary> vocabListFull = null;
     private List<IrregularVerb> irregularVerbList = null;
+    private List<IrregularVerb> irregularVerbListFull = null;
     private VocabularyViewModel viewModel;
     private String type;
     private LifecycleOwner lifecycleOwner;
@@ -33,6 +38,7 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
 
     public void setVocabularyList(List<Vocabulary> vocabList) {
         this.vocabList = vocabList;
+        this.vocabListFull = new ArrayList<>(vocabList);
         this.irregularVerbList = null;
         isIrregularVerbMode = false;
         notifyDataSetChanged();
@@ -40,6 +46,7 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
 
     public void setIrregularVerbList(List<IrregularVerb> irregularVerbList) {
         this.irregularVerbList = irregularVerbList;
+        this.irregularVerbListFull = new ArrayList<>(irregularVerbList);
         this.vocabList = null;
         isIrregularVerbMode = true;
         notifyDataSetChanged();
@@ -97,7 +104,6 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
         } else {
             holder.starIcon.setImageResource(android.R.drawable.btn_star_big_off);
         }
-
         holder.starIcon.setOnClickListener(v -> {
             if (!isIrregularVerbMode && vocabList != null) {
                 starClickListener.onStarClick(vocabList.get(position), position);
@@ -105,6 +111,22 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
                 starClickListener.onStarClick(irregularVerbList.get(position), position);
             }
         });
+
+        holder.itemView.setOnClickListener(v -> {
+            String word;
+            if (!isIrregularVerbMode && vocabList != null) {
+                word = vocabList.get(position).getWord();
+            } else if (isIrregularVerbMode && irregularVerbList != null) {
+                word = irregularVerbList.get(position).getWord();
+            } else {
+                return;
+            }
+            android.content.Intent intent = new android.content.Intent(v.getContext(),
+                    com.example.hcmute.quangvaphong.views.DictionaryActivity.class);
+            intent.putExtra("word", word);
+            v.getContext().startActivity(intent);
+        });
+
     }
 
     @Override
@@ -116,6 +138,69 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
         }
         return 0;
     }
+
+    @Override
+    public Filter getFilter() {
+        return vocabularyFilter;
+    }
+
+    private Filter vocabularyFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+
+            if (constraint == null || constraint.length() == 0) {
+                if (!isIrregularVerbMode && vocabListFull != null) {
+                    results.values = vocabListFull;
+                    results.count = vocabListFull.size();
+                } else if (isIrregularVerbMode && irregularVerbListFull != null) {
+                    results.values = irregularVerbListFull;
+                    results.count = irregularVerbListFull.size();
+                }
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+
+                if (!isIrregularVerbMode && vocabListFull != null) {
+                    List<Vocabulary> filteredList = new ArrayList<>();
+                    for (Vocabulary item : vocabListFull) {
+                        if (item.getWord().toLowerCase().contains(filterPattern) ||
+                                item.getMeaning().toLowerCase().contains(filterPattern)) {
+                            filteredList.add(item);
+                        }
+                    }
+                    results.values = filteredList;
+                    results.count = filteredList.size();
+                } else if (isIrregularVerbMode && irregularVerbListFull != null) {
+                    List<IrregularVerb> filteredList = new ArrayList<>();
+                    for (IrregularVerb item : irregularVerbListFull) {
+                        if (item.getWord().toLowerCase().contains(filterPattern) ||
+                                item.getMeaning().toLowerCase().contains(filterPattern) ||
+                                item.getV2().toLowerCase().contains(filterPattern) ||
+                                item.getV3().toLowerCase().contains(filterPattern)) {
+                            filteredList.add(item);
+                        }
+                    }
+                    results.values = filteredList;
+                    results.count = filteredList.size();
+                }
+            }
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            if (results.values == null) {
+                return;
+            }
+
+            if (!isIrregularVerbMode) {
+                vocabList = (List<Vocabulary>) results.values;
+            } else {
+                irregularVerbList = (List<IrregularVerb>) results.values;
+            }
+            notifyDataSetChanged();
+        }
+    };
 
     static class VocabViewHolder extends RecyclerView.ViewHolder {
         TextView wordText, wordV2Text, wordV3Text, pronunciationText, meaningText;
@@ -134,4 +219,3 @@ public class VocabularyAdapter extends RecyclerView.Adapter<VocabularyAdapter.Vo
     }
 
 }
-

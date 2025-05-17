@@ -68,6 +68,14 @@ public class DictionaryActivity extends AppCompatActivity {
             addToSearchHistory(selectedWord);
 
             new FetchDictionaryTask().execute(selectedWord);
+
+            if (getIntent().getBooleanExtra("should_pronounce", false)) {
+                new android.os.Handler().postDelayed(() -> {
+                    if (textToSpeech != null && !selectedWord.isEmpty()) {
+                        textToSpeech.speak(selectedWord, TextToSpeech.QUEUE_FLUSH, null, null);
+                    }
+                }, 500); 
+            }
         }
         btnPronunciation.setOnClickListener(v -> {
             if (selectedWord != null && !selectedWord.isEmpty()) {
