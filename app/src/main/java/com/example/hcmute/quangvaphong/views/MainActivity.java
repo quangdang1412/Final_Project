@@ -2,6 +2,8 @@ package com.example.hcmute.quangvaphong.views;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,20 +23,21 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private TextView toeicBtn, toeflBtn, ieltsBtn, irreBtn, oxfordBtn;
-    private CardView yourWord, quiz;
+    private CardView yourWord,quiz;
+    private AutoCompleteTextView searchInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        searchInput = findViewById(R.id.search_input);
         toeicBtn = findViewById(R.id.toeic_vocab_text);
         toeflBtn = findViewById(R.id.toefl_vocab_text);
         ieltsBtn = findViewById(R.id.ielts_vocab_text);
         oxfordBtn = findViewById(R.id.oxford_vocab_text);
         irreBtn = findViewById(R.id.irregular_verbs_text);
         yourWord = findViewById(R.id.your_words_card);
-        quiz = findViewById(R.id.quiz_card);
         setEvent();
 
         if (PrefsUtil.isFirstRun(this)) {
@@ -43,6 +46,32 @@ public class MainActivity extends AppCompatActivity {
             new Thread(() -> {
             }).start();
         }
+    }
+
+    private void setupSearchAutoComplete() {
+        new Thread(() -> {
+            List<String> wordsList = VocabularyLoader.loadEnglishWordsFromAssets(this);
+
+            runOnUiThread(() -> {
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                        this,
+                        android.R.layout.simple_dropdown_item_1line,
+                        wordsList);
+                searchInput.setAdapter(adapter);
+
+                searchInput.setOnFocusChangeListener((v, hasFocus) -> {
+                    if (hasFocus) {
+                        searchInput.showDropDown();
+                    }
+                });
+
+                searchInput.setOnClickListener(v -> searchInput.showDropDown());
+
+                searchInput.setOnItemClickListener((parent, view, position, id) -> {
+                    String selectedWord = (String) parent.getItemAtPosition(position);
+                });
+            });
+        }).start();
     }
 
     private void setEvent() {
