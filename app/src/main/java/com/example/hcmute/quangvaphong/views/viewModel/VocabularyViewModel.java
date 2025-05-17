@@ -1,4 +1,4 @@
-package com.example.hcmute.quangvaphong.views.adapter;
+package com.example.hcmute.quangvaphong.views.viewModel;
 
 import android.app.Application;
 import android.util.Log;

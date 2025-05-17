@@ -7,12 +7,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.hcmute.quangvaphong.R;
 import com.example.hcmute.quangvaphong.models.Question;
+import com.example.hcmute.quangvaphong.models.Quiz;
 import com.example.hcmute.quangvaphong.models.StudiedVocabulary;
 import com.example.hcmute.quangvaphong.views.adapter.ListQuestionAdapter;
-import com.example.hcmute.quangvaphong.views.adapter.VocabularyViewModel;
+import com.example.hcmute.quangvaphong.views.viewModel.QuizViewModel;
+import com.example.hcmute.quangvaphong.views.viewModel.VocabularyViewModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +28,7 @@ public class QuizActivity extends AppCompatActivity {
     private List<Question> data;
     private String quizID;
     private VocabularyViewModel viewModel;
+    private QuizViewModel quizViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +38,8 @@ public class QuizActivity extends AppCompatActivity {
         Button submitBtn = findViewById(R.id.submitBtn);
         TextView title = findViewById(R.id.title);
         viewModel = new VocabularyViewModel(this.getApplication());
-        generateQuestionsFromStudiedVocabulary(5, questions -> {
+        quizViewModel = new ViewModelProvider(this).get(QuizViewModel.class);
+        generateQuestionsFromStudiedVocabulary(20, questions -> {
             runOnUiThread(() -> {
                 if (questions == null || questions.isEmpty()) {
                     Toast.makeText(this, "Không đủ dữ liệu để tạo quiz!", Toast.LENGTH_SHORT).show();
@@ -52,13 +57,23 @@ public class QuizActivity extends AppCompatActivity {
                 return;
             }
 
+            int correct = 0;
             for (Question q : data) {
                 if (q.getSelectedAnswer() == -1) {
                     Toast.makeText(this, "Vui lòng trả lời hết các câu hỏi trước khi nộp!", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if (q.getCorrectAnswer() == q.getSelectedAnswer())
+                    correct++;
             }
 
+            Quiz quiz = new Quiz();
+            quiz.setDateTime(System.currentTimeMillis());
+            quiz.setCorrectAnswer(correct);
+            quiz.setTotalAnswer(data.size());
+
+            quizViewModel.setQuizResults(data);
+            quizViewModel.saveQuizAndQuestions(quiz, data);
 
             new androidx.appcompat.app.AlertDialog.Builder(this)
                     .setTitle("Nộp bài")

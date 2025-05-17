@@ -29,6 +29,9 @@
         android:theme="@style/Theme.Final_Project"
         tools:targetApi="31">
         <activity
+            android:name=".views.ListQuizActivity"
+            android:exported="false" />
+        <activity
             android:name=".views.ResultActivity"
             android:exported="false"
             android:theme="@style/Theme.Final_Project" />

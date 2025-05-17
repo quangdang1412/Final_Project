@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hcmute.quangvaphong.R;
 import com.example.hcmute.quangvaphong.models.StudiedVocabulary;
 import com.example.hcmute.quangvaphong.views.adapter.StudiedVocabularyAdapter;
-import com.example.hcmute.quangvaphong.views.adapter.VocabularyViewModel;
+import com.example.hcmute.quangvaphong.views.viewModel.VocabularyViewModel;
 
 import java.util.ArrayList;
 import java.util.List;

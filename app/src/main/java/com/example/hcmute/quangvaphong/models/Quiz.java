@@ -3,8 +3,6 @@ package com.example.hcmute.quangvaphong.models;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,16 +14,11 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@Entity(tableName = "question")
-public class Question implements Serializable {
+@Entity(tableName = "quiz")
+public class Quiz {
     @PrimaryKey(autoGenerate = true)
-    protected int id;
-    private long quizId;
-    private String question;
-    private String opt1;
-    private String opt2;
-    private String opt3;
-    private String opt4;
+    protected long id;
+    private long dateTime;
     private int correctAnswer;
-    private int selectedAnswer;
+    private int totalAnswer;
 }

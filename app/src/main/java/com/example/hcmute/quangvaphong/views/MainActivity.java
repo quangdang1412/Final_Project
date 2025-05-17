@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         quiz.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, QuizActivity.class);
+            Intent intent = new Intent(MainActivity.this, ListQuizActivity.class);
             startActivity(intent);
         });
 
