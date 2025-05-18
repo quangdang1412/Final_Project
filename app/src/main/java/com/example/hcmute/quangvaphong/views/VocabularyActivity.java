@@ -105,7 +105,6 @@ public class VocabularyActivity extends AppCompatActivity {
                     @Override
                     public void onChanged(StudiedVocabulary studiedVocab) {
                         liveData.removeObserver(this);
-
                         if (studiedVocab == null) {
                             StudiedVocabulary newVocab = new StudiedVocabulary();
                             newVocab.setWord(vocab1.getWord());
@@ -155,7 +154,6 @@ public class VocabularyActivity extends AppCompatActivity {
                             IrregularVerb vocab = vocab1;
                             vocab.setIsSave(false);
                             viewModel.updateVocabulary(vocab, value);
-
                             viewModel.deleteStudiedVocabulary(studiedVocab);
                             Toast.makeText(getApplicationContext(), "Đã xóa", Toast.LENGTH_SHORT).show();
                         }
