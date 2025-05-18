@@ -22,8 +22,11 @@ public interface VocabularyDao {
     @Query("SELECT * FROM vocabulary_toeic")
     LiveData<List<VocabularyToeic>> getAllVocabularyToeic();
 
-    @Query("SELECT * FROM vocabulary_toeic WHERE IsSave==1")
-    List<VocabularyToeic> getSavedVocabularyToeic();
+    @Query("SELECT count(*) FROM vocabulary_toeic WHERE IsSave==1")
+    int getNumberSavedVocabularyToeic();
+
+    @Query("SELECT count(*) FROM vocabulary_toeic")
+    int getNumberVocabularyToeic();
 
     @Query("SELECT * FROM vocabulary_toeic WHERE word = :word LIMIT 1")
     LiveData<VocabularyToeic> getByWord(String word);

@@ -23,4 +23,10 @@ public interface IrregularVerbDao {
 
     @Query("SELECT * FROM irregular_verb WHERE word = :word LIMIT 1")
     LiveData<IrregularVerb> getByWord(String word);
+
+    @Query("SELECT count(*) FROM irregular_verb WHERE IsSave==1")
+    int getNumberSavedIrregularVerb();
+
+    @Query("SELECT count(*) FROM irregular_verb")
+    int getNumberIrregularVerb();
 }

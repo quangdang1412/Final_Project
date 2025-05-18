@@ -74,9 +74,9 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginEnd="8dp"
-                    android:src="@android:drawable/ic_menu_search"
-                     />                
-                    <AutoCompleteTextView
+                    android:src="@android:drawable/ic_menu_search" />
+
+                <AutoCompleteTextView
                     android:id="@+id/search_input"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -92,8 +92,7 @@
                     android:id="@+id/voice_icon"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@android:drawable/ic_btn_speak_now"
-                     />
+                    android:src="@android:drawable/ic_btn_speak_now" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -152,8 +151,7 @@
                     android:layout_marginEnd="16dp"
                     android:background="@drawable/circular_background_orange"
                     android:padding="8dp"
-                    android:src="@android:drawable/ic_dialog_info"
-                     />
+                    android:src="@android:drawable/ic_dialog_info" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -196,75 +194,36 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
+            android:id="@+id/your_words_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="8dp">
+            android:layout_marginVertical="8dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/your_words_card"
-                android:layout_width="0dp"
-                android:layout_height="95dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="4dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="0dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="16dp">
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@android:drawable/ic_menu_myplaces"
+                    app:tint="@color/orange_item" />
 
-                    <ImageView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:layout_marginBottom="8dp"
-                        android:src="@android:drawable/ic_menu_myplaces"
-                        app:tint="@color/orange_item" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/your_words"
-                        android:textSize="14sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/searched_words_card"
-                android:layout_width="0dp"
-                android:layout_height="95dp"
-                android:layout_weight="1"
-                android:layout_marginStart="4dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="0dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="16dp">
-
-                    <ImageView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:layout_marginBottom="8dp"
-                        android:src="@android:drawable/ic_menu_recent_history"
-                        app:tint="@color/red_item" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/searched_words"
-                        android:textSize="14sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Từ đã học"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/free_package_card"
@@ -293,8 +252,7 @@
                         android:layout_marginEnd="16dp"
                         android:background="@drawable/circular_background_grey"
                         android:padding="8dp"
-                        android:src="@android:drawable/ic_menu_sort_by_size"
-                         />
+                        android:src="@android:drawable/ic_menu_sort_by_size" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -320,6 +278,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/irregular_verbs_percent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/completion"
@@ -342,6 +301,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/toeic_vocab_percent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/completion"
@@ -364,6 +324,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/ielts_vocab_percent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/completion"
@@ -386,6 +347,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/toefl_vocab_percent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/completion"
@@ -408,6 +370,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/oxford_vocab_percent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/completion"
@@ -415,6 +378,7 @@
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="24dp" />

@@ -2,13 +2,14 @@ package com.example.hcmute.quangvaphong.views;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -27,13 +28,15 @@ import com.example.hcmute.quangvaphong.utils.VocabularyLoader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
-    private TextView toeicBtn, toeflBtn, ieltsBtn, irreBtn, oxfordBtn;
+    private TextView toeicBtn, toeflBtn, ieltsBtn, irreBtn, oxfordBtn, toeicPer, toeflPer, ieltsPer, irrePer, oxfordPer;
     private CardView yourWord, quiz, chatbot;
     private AutoCompleteTextView searchInput;
     private ImageView voiceIcon;
     private ActivityResultLauncher<Intent> speechRecognitionLauncher;
+    private VocabularyRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,23 +62,58 @@ public class MainActivity extends AppCompatActivity {
 
         searchInput = findViewById(R.id.search_input);
         voiceIcon = findViewById(R.id.voice_icon);
+
         toeicBtn = findViewById(R.id.toeic_vocab_text);
         toeflBtn = findViewById(R.id.toefl_vocab_text);
         ieltsBtn = findViewById(R.id.ielts_vocab_text);
         oxfordBtn = findViewById(R.id.oxford_vocab_text);
         irreBtn = findViewById(R.id.irregular_verbs_text);
+
+        toeicPer = findViewById(R.id.toeic_vocab_percent);
+        toeflPer = findViewById(R.id.toefl_vocab_percent);
+        ieltsPer = findViewById(R.id.ielts_vocab_percent);
+        oxfordPer = findViewById(R.id.oxford_vocab_percent);
+        irrePer = findViewById(R.id.irregular_verbs_percent);
+
         yourWord = findViewById(R.id.your_words_card);
         quiz = findViewById(R.id.quiz_card);
         chatbot = findViewById(R.id.ai_assistant_card);
+
         setupSearchAutoComplete();
         setEvent();
-
+        repository = new VocabularyRepository(this);
         if (PrefsUtil.isFirstRun(this)) {
-            VocabularyRepository repository = new VocabularyRepository(this);
             loadDataFromFile(repository);
             new Thread(() -> {
             }).start();
+        } else {
+            setPercent();
         }
+    }
+
+    private void setPercent() {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            int toeic = repository.getNumberStudiedVocabularyToeic();
+            int toefl = repository.getNumberStudiedVocabularyToelf();
+            int oxford = repository.getNumberStudiedVocabularyOxford();
+            int ielts = repository.getNumberStudiedVocabularyIelts();
+            int irregularVerb = repository.getNumberStudiedVocabularyIrregularVerb();
+
+
+            new Handler(Looper.getMainLooper()).post(() -> {
+                toeicPer.setText("Hoàn thành" + toeic + "%");
+                toeflPer.setText("Hoàn thành" + toefl + "%");
+                oxfordPer.setText("Hoàn thành" + oxford + "%");
+                ieltsPer.setText("Hoàn thành" + ielts + "%");
+                irrePer.setText("Hoàn thành" + irregularVerb + "%");
+            });
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setPercent();
     }
 
     private void setupSearchAutoComplete() {
