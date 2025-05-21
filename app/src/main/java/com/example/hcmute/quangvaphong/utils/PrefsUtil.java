@@ -10,6 +10,7 @@ public class PrefsUtil {
 
     public static boolean isFirstRun(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        System.out.println("isFirstRun: " + prefs.getBoolean(KEY_FIRST_RUN, true));
         return prefs.getBoolean(KEY_FIRST_RUN, true);
     }
 

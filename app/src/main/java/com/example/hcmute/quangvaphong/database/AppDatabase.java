@@ -33,7 +33,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "vocabulary_database")
-                            .fallbackToDestructiveMigration()
+//                            .fallbackToDestructiveMigration()
                             .build();
                 }
             }

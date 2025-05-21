@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
             repository.insertListVocabularyIelts(vocabularyIeltsList);
             repository.insertListVocabularyOxford(vocabularyOxfordList);
             repository.insertListIrregularVerb(irregularVerbList);
-            PrefsUtil.setFirstRun(this, false);
+            PrefsUtil.setFirstRun(this, true);
         } else {
             System.err.println("Không load được dữ liệu từ file assets.");
         }
