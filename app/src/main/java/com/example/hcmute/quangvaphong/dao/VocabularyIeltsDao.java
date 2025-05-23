@@ -29,4 +29,7 @@ public interface VocabularyIeltsDao {
 
     @Query("SELECT * FROM vocabulary_ielts WHERE word = :word LIMIT 1")
     LiveData<VocabularyIelts> getByWord(String word);
+
+    @Query("SELECT * FROM vocabulary_ielts")
+    List<VocabularyIelts> getAllVocabularyIeltsSync();
 }

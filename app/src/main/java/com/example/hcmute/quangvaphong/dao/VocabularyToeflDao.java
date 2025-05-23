@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.example.hcmute.quangvaphong.models.VocabularyIelts;
 import com.example.hcmute.quangvaphong.models.VocabularyToefl;
 
 import java.util.List;
@@ -30,4 +31,7 @@ public interface VocabularyToeflDao {
 
     @Query("SELECT * FROM vocabulary_toefl WHERE word = :word LIMIT 1")
     LiveData<VocabularyToefl> getByWord(String word);
+
+    @Query("SELECT * FROM vocabulary_toefl")
+    List<VocabularyToefl> getAllVocabularyToeflSync();
 }
