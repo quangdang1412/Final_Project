@@ -164,24 +164,39 @@ public class VocabularyRepository {
     }
 
     public int getNumberStudiedVocabularyToeic() {
-        return (int) vocabularyDao.getNumberSavedVocabularyToeic() * 100 / vocabularyDao.getNumberVocabularyToeic();
+        return vocabularyDao.getNumberVocabularyToeic() == 0 ? 0 : (int) vocabularyDao.getNumberSavedVocabularyToeic() * 100 / vocabularyDao.getNumberVocabularyToeic();
     }
 
     public int getNumberStudiedVocabularyToelf() {
-        return (int) vocabularyToeflDao.getNumberSavedVocabularyToefl() * 100 / vocabularyToeflDao.getNumberVocabularyToefl();
+        return vocabularyToeflDao.getNumberVocabularyToefl() == 0 ? 0 : (int) vocabularyToeflDao.getNumberSavedVocabularyToefl() * 100 / vocabularyToeflDao.getNumberVocabularyToefl();
     }
 
     public int getNumberStudiedVocabularyIelts() {
-        return (int) vocabularyIeltsDao.getNumberSavedVocabularyIelts() * 100 / vocabularyIeltsDao.getNumberVocabularyIelts();
+        return vocabularyIeltsDao.getNumberVocabularyIelts() == 0 ? 0 : (int) vocabularyIeltsDao.getNumberSavedVocabularyIelts() * 100 / vocabularyIeltsDao.getNumberVocabularyIelts();
     }
 
     public int getNumberStudiedVocabularyOxford() {
-        return (int) vocabularyOxfordDao.getNumberSavedVocabularyOxford() * 100 / vocabularyOxfordDao.getNumberVocabularyOxford();
+        return vocabularyOxfordDao.getNumberVocabularyOxford() == 0 ? 0 : (int) vocabularyOxfordDao.getNumberSavedVocabularyOxford() * 100 / vocabularyOxfordDao.getNumberVocabularyOxford();
     }
 
     public int getNumberStudiedVocabularyIrregularVerb() {
-        return (int) irregularVerbDao.getNumberSavedIrregularVerb() * 100 / irregularVerbDao.getNumberIrregularVerb();
+        return irregularVerbDao.getNumberIrregularVerb() == 0 ? 0 : (int) irregularVerbDao.getNumberSavedIrregularVerb() * 100 / irregularVerbDao.getNumberIrregularVerb();
     }
 
+    public List<VocabularyIelts> getAllVocabularyIeltsSync() {
+        return vocabularyIeltsDao.getAllVocabularyIeltsSync();
+    }
+
+    public List<VocabularyToefl> getAllVocabularyToeflSync() {
+        return vocabularyToeflDao.getAllVocabularyToeflSync();
+    }
+
+    public List<VocabularyOxford> getAllVocabularyOxfordSync() {
+        return vocabularyOxfordDao.getAllVocabularyOxfordSync();
+    }
+
+    public List<IrregularVerb> getAllVocabularyIrregularSync() {
+        return irregularVerbDao.getAllVocabularyIrregularSync();
+    }
 
 }

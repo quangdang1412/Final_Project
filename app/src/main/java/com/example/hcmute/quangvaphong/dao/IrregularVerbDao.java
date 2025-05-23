@@ -7,6 +7,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.example.hcmute.quangvaphong.models.IrregularVerb;
+import com.example.hcmute.quangvaphong.models.VocabularyIelts;
 
 import java.util.List;
 
@@ -29,4 +30,7 @@ public interface IrregularVerbDao {
 
     @Query("SELECT count(*) FROM irregular_verb")
     int getNumberIrregularVerb();
+
+    @Query("SELECT * FROM irregular_verb")
+    List<IrregularVerb> getAllVocabularyIrregularSync();
 }

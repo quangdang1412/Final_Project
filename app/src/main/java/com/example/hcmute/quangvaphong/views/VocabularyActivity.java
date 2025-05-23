@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -64,6 +65,9 @@ public class VocabularyActivity extends AppCompatActivity {
 
         ImageView backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> finish());
+
+        TextView toolbarTitle = findViewById(R.id.toolbar_title);
+        toolbarTitle.setText("Từ điển " + value.toUpperCase());
 
         viewModel = new VocabularyViewModel(this.getApplication());
         adapter = new VocabularyAdapter(viewModel, value, this);

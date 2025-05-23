@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.example.hcmute.quangvaphong.models.VocabularyIelts;
 import com.example.hcmute.quangvaphong.models.VocabularyOxford;
 
 import java.util.List;
@@ -29,4 +30,7 @@ public interface VocabularyOxfordDao {
 
     @Query("SELECT * FROM vocabulary_oxford WHERE word = :word LIMIT 1")
     LiveData<VocabularyOxford> getByWord(String word);
+
+    @Query("SELECT * FROM vocabulary_oxford")
+    List<VocabularyOxford> getAllVocabularyOxfordSync();
 }

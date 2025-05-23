@@ -1,13 +1,27 @@
 package com.example.hcmute.quangvaphong.views;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +30,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.hcmute.quangvaphong.R;
 import com.example.hcmute.quangvaphong.models.Quiz;
+import com.example.hcmute.quangvaphong.receivers.NotificationReceiver;
+import com.example.hcmute.quangvaphong.receivers.QuizAlarmNotificationReceiver;
 import com.example.hcmute.quangvaphong.views.adapter.ListQuizAdapter;
 import com.example.hcmute.quangvaphong.views.viewModel.QuizViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -36,7 +52,7 @@ public class ListQuizActivity extends AppCompatActivity {
     private AutoCompleteTextView setDateCalendar;
     private QuizViewModel quizViewModel;
 
-    private FloatingActionButton newQuizBtn;
+    private FloatingActionButton newQuizBtn, alarmQuizBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +73,7 @@ public class ListQuizActivity extends AppCompatActivity {
         listViewProcess = findViewById(R.id.listProcessView);
         setDateCalendar = findViewById(R.id.setDateCalendar);
         newQuizBtn = findViewById(R.id.fabAddQuiz);
+        alarmQuizBtn = findViewById(R.id.alarmQuizBtn);
 
         selectedDate = LocalDate.now();
         setDateCalendar.setText(monthYearFromDate(selectedDate));
@@ -98,6 +115,27 @@ public class ListQuizActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        alarmQuizBtn.setOnClickListener(v -> {
+            final Calendar calendar = Calendar.getInstance();
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+
+            TimePickerDialog timePickerDialog = new TimePickerDialog(
+                    this,
+                    (TimePicker view, int hourOfDay, int minute1) -> {
+                        String time = String.format("%02d:%02d", hourOfDay, minute1);
+                        Toast.makeText(this, "Alarm set for: " + time, Toast.LENGTH_SHORT).show();
+
+                        scheduleNotification(this, hourOfDay, minute1);
+                    },
+                    hour,
+                    minute,
+                    true
+            );
+
+            timePickerDialog.show();
+        });
+
         listViewProcess.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -107,6 +145,40 @@ public class ListQuizActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    public void scheduleNotification(Context context, int hour, int minute) {
+        Log.d("MainActivity", "Scheduling notification for " + hour + ":" + minute);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
+
+        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
+
+        Intent intent = new Intent(context, QuizAlarmNotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context, 1002, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (alarmManager.canScheduleExactAlarms()) {
+                alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.getTimeInMillis(),
+                        pendingIntent
+                );
+            }
+        } else {
+            alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis(),
+                    pendingIntent
+            );
+        }
     }
 
     private String monthYearFromDate(LocalDate date) {

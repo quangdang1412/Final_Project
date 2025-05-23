@@ -60,6 +60,18 @@
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/alarmQuizBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="96dp"
+        android:layout_marginEnd="24dp"
+        android:contentDescription="Set Quiz Alarm"
+        android:src="@android:drawable/ic_lock_idle_alarm"
+        android:backgroundTint="@color/orange_item"
+        tools:ignore="VectorDrawableCompat" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddQuiz"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
