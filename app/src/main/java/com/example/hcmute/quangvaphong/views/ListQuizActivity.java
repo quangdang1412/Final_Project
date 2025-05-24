@@ -35,6 +35,7 @@ import com.example.hcmute.quangvaphong.R;
 import com.example.hcmute.quangvaphong.models.Quiz;
 import com.example.hcmute.quangvaphong.receivers.NotificationReceiver;
 import com.example.hcmute.quangvaphong.receivers.QuizAlarmNotificationReceiver;
+import com.example.hcmute.quangvaphong.utils.ReceiverCalls;
 import com.example.hcmute.quangvaphong.views.adapter.ListQuizAdapter;
 import com.example.hcmute.quangvaphong.views.viewModel.QuizViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -144,7 +145,7 @@ public class ListQuizActivity extends AppCompatActivity {
                         String time = String.format("%02d:%02d", hourOfDay, minute1);
                         Toast.makeText(this, "Đã cài giờ thực hiện quiz hàng ngày: " + time, Toast.LENGTH_SHORT).show();
 
-                        scheduleNotification(this, hourOfDay, minute1);
+                        ReceiverCalls.scheduleNotification(this, hourOfDay, minute1);
 
                         sharedPreferences.edit()
                                 .putBoolean("isSetQuizAlarm", true)
@@ -172,39 +173,7 @@ public class ListQuizActivity extends AppCompatActivity {
         });
     }
 
-    public void scheduleNotification(Context context, int hour, int minute) {
-        Log.d("MainActivity", "Scheduling notification for " + hour + ":" + minute);
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, 0);
 
-        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
-            calendar.add(Calendar.DAY_OF_YEAR, 1);
-        }
-
-        Intent intent = new Intent(context, QuizAlarmNotificationReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                context, 1002, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (alarmManager.canScheduleExactAlarms()) {
-                alarmManager.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        calendar.getTimeInMillis(),
-                        pendingIntent
-                );
-            }
-        } else {
-            alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    calendar.getTimeInMillis(),
-                    pendingIntent
-            );
-        }
-    }
 
     private String monthYearFromDate(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
