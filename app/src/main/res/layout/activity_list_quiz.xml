@@ -59,17 +59,33 @@
             android:dividerHeight="15.0sp" />
     </LinearLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/alarmQuizBtn"
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="96dp"
         android:layout_marginEnd="24dp"
-        android:contentDescription="Set Quiz Alarm"
-        android:src="@android:drawable/ic_lock_idle_alarm"
-        android:backgroundTint="@color/orange_item"
-        tools:ignore="VectorDrawableCompat" />
+        android:layout_marginBottom="96dp">
+
+        <ImageButton
+            android:id="@+id/alarmQuizBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Alarm Quiz"
+            android:src="@drawable/baseline_alarm_24"
+            android:backgroundTint="@color/orange_item"
+            android:background="@drawable/corner_container"
+            android:padding="16dp" />
+
+        <View
+            android:id="@+id/fab_dot"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:background="@drawable/noti_circle"
+            android:layout_gravity="top|end"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddQuiz"
