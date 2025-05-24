@@ -30,7 +30,7 @@ public class QuizAlarmNotificationReceiver extends BroadcastReceiver {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.baseline_notifications_24)
                 .setContentTitle("Quiz time")
-                .setContentText("Quiz time")
+                .setContentText("It's time for vocabulary revision")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true);
 

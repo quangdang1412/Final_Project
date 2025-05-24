@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,10 +14,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -52,7 +55,11 @@ public class ListQuizActivity extends AppCompatActivity {
     private AutoCompleteTextView setDateCalendar;
     private QuizViewModel quizViewModel;
 
-    private FloatingActionButton newQuizBtn, alarmQuizBtn;
+    private FloatingActionButton newQuizBtn;
+    private ImageButton alarmQuizBtn;
+    private View notificationDot;
+
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +81,7 @@ public class ListQuizActivity extends AppCompatActivity {
         setDateCalendar = findViewById(R.id.setDateCalendar);
         newQuizBtn = findViewById(R.id.fabAddQuiz);
         alarmQuizBtn = findViewById(R.id.alarmQuizBtn);
+        notificationDot = findViewById(R.id.fab_dot);
 
         selectedDate = LocalDate.now();
         setDateCalendar.setText(monthYearFromDate(selectedDate));
@@ -82,6 +90,15 @@ public class ListQuizActivity extends AppCompatActivity {
 
         listQuizAdapter = new ListQuizAdapter(listQuiz);
         listViewProcess.setAdapter(listQuizAdapter);
+
+        sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+
+        boolean isSetQuizAlarm = sharedPreferences.getBoolean("isSetQuizAlarm", false);
+        if (isSetQuizAlarm) {
+            notificationDot.setVisibility(View.VISIBLE);
+        } else {
+            notificationDot.setVisibility(View.GONE);
+        }
 
         long[] range1 = getMonthRangeTimestamps(selectedDate.getYear(), selectedDate.getMonthValue());
         quizViewModel.getListQuizByMonth(range1[0], range1[1]).observe(this, quizzes -> {
@@ -116,6 +133,7 @@ public class ListQuizActivity extends AppCompatActivity {
         });
 
         alarmQuizBtn.setOnClickListener(v -> {
+
             final Calendar calendar = Calendar.getInstance();
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
             int minute = calendar.get(Calendar.MINUTE);
@@ -124,9 +142,16 @@ public class ListQuizActivity extends AppCompatActivity {
                     this,
                     (TimePicker view, int hourOfDay, int minute1) -> {
                         String time = String.format("%02d:%02d", hourOfDay, minute1);
-                        Toast.makeText(this, "Alarm set for: " + time, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Đã cài giờ thực hiện quiz hàng ngày: " + time, Toast.LENGTH_SHORT).show();
 
                         scheduleNotification(this, hourOfDay, minute1);
+
+                        sharedPreferences.edit()
+                                .putBoolean("isSetQuizAlarm", true)
+                                .apply();
+
+                        notificationDot.setVisibility(View.VISIBLE);
+
                     },
                     hour,
                     minute,
