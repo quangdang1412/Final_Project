@@ -72,21 +72,6 @@ public class StudiedVocabularyActivity extends AppCompatActivity {
             List<StudiedVocabulary> vocabList = new ArrayList<>(toeicList);
             adapter.setVocabularyList(vocabList);
         });
-        viewModel.getAllVocabularyToeic().observe(this, toeicList -> {
-
-        });
-        viewModel.getAllVocabularyToefl().observe(this, toeicList -> {
-
-        });
-        viewModel.getAllVocabularyIelts().observe(this, toeicList -> {
-
-        });
-        viewModel.getAllVocabularyOxford().observe(this, toeicList -> {
-
-        });
-        viewModel.getAllIrregularVerb().observe(this, toeicList -> {
-
-        });
 
 
         adapter.setOnStarClickListener(new StudiedVocabularyAdapter.OnStarClickListener() {

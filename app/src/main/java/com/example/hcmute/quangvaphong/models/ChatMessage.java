@@ -14,5 +14,4 @@ import lombok.Setter;
 public class ChatMessage {
     private String message;
     private boolean isSender;
-
 }

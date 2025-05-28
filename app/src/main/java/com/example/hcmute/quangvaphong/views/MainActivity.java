@@ -1,12 +1,9 @@
 package com.example.hcmute.quangvaphong.views;
 
 import android.app.AlarmManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,11 +19,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.app.NotificationCompat;
 
 import com.example.hcmute.quangvaphong.R;
 import com.example.hcmute.quangvaphong.models.IrregularVerb;
-import com.example.hcmute.quangvaphong.models.Vocabulary;
 import com.example.hcmute.quangvaphong.models.VocabularyIelts;
 import com.example.hcmute.quangvaphong.models.VocabularyOxford;
 import com.example.hcmute.quangvaphong.models.VocabularyToefl;
@@ -35,14 +30,10 @@ import com.example.hcmute.quangvaphong.receivers.NotificationReceiver;
 import com.example.hcmute.quangvaphong.repository.VocabularyRepository;
 import com.example.hcmute.quangvaphong.utils.PrefsUtil;
 import com.example.hcmute.quangvaphong.utils.VocabularyLoader;
-import com.example.hcmute.quangvaphong.views.viewModel.VocabularyViewModel;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
-import java.util.Random;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
@@ -99,13 +90,10 @@ public class MainActivity extends AppCompatActivity {
         repository = new VocabularyRepository(this);
         if (PrefsUtil.isFirstRun(this)) {
             loadDataFromFile(repository);
-            new Thread(() -> {
-            }).start();
-        } else {
-            setPercent();
+            PrefsUtil.setFirstRun(this, false);
         }
-
-        scheduleNotification(this,7, 0);
+        setPercent();
+        scheduleNotification(this, 7, 0);
 
     }
 
@@ -119,11 +107,11 @@ public class MainActivity extends AppCompatActivity {
 
 
             new Handler(Looper.getMainLooper()).post(() -> {
-                toeicPer.setText("Hoàn thành" + toeic + "%");
-                toeflPer.setText("Hoàn thành" + toefl + "%");
-                oxfordPer.setText("Hoàn thành" + oxford + "%");
-                ieltsPer.setText("Hoàn thành" + ielts + "%");
-                irrePer.setText("Hoàn thành" + irregularVerb + "%");
+                toeicPer.setText("Hoàn thành " + toeic + "%");
+                toeflPer.setText("Hoàn thành " + toefl + "%");
+                oxfordPer.setText("Hoàn thành " + oxford + "%");
+                ieltsPer.setText("Hoàn thành " + ielts + "%");
+                irrePer.setText("Hoàn thành " + irregularVerb + "%");
             });
         });
     }
@@ -277,7 +265,6 @@ public class MainActivity extends AppCompatActivity {
             repository.insertListVocabularyIelts(vocabularyIeltsList);
             repository.insertListVocabularyOxford(vocabularyOxfordList);
             repository.insertListIrregularVerb(irregularVerbList);
-            PrefsUtil.setFirstRun(this, true);
         } else {
             System.err.println("Không load được dữ liệu từ file assets.");
         }

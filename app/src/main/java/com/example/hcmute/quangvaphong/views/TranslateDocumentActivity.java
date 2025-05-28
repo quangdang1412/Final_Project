@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,23 +21,17 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.hcmute.quangvaphong.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.mlkit.common.model.DownloadConditions;
 import com.google.mlkit.nl.translate.TranslateLanguage;
 import com.google.mlkit.nl.translate.Translation;
 import com.google.mlkit.nl.translate.Translator;
 import com.google.mlkit.nl.translate.TranslatorOptions;
 import com.google.mlkit.vision.common.InputImage;
-import com.google.mlkit.vision.text.Text;
 import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -152,7 +145,7 @@ public class TranslateDocumentActivity extends AppCompatActivity {
     private void requestCameraPermissionAndOpenCamera() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    new String[] { Manifest.permission.CAMERA }, REQUEST_CAMERA_PERMISSION);
+                    new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
         } else {
             openCamera();
         }
@@ -176,7 +169,7 @@ public class TranslateDocumentActivity extends AppCompatActivity {
         }
 
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] { permission }, REQUEST_GALLERY_PERMISSION);
+            ActivityCompat.requestPermissions(this, new String[]{permission}, REQUEST_GALLERY_PERMISSION);
         } else {
             openGallery();
         }
@@ -189,7 +182,7 @@ public class TranslateDocumentActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-            @NonNull int[] grantResults) {
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -265,8 +258,7 @@ public class TranslateDocumentActivity extends AppCompatActivity {
 
             translator.downloadModelIfNeeded(conditions)
                     .addOnSuccessListener(unused -> {
-                        Toast.makeText(TranslateDocumentActivity.this,
-                                "Model downloaded successfully", Toast.LENGTH_SHORT).show();
+
                         performTranslation(finalTranslator, finalText);
                     })
                     .addOnFailureListener(e -> {
