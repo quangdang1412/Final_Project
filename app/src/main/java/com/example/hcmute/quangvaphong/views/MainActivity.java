@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,8 +18,11 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.hcmute.quangvaphong.R;
 import com.example.hcmute.quangvaphong.models.IrregularVerb;
@@ -84,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
         yourWord = findViewById(R.id.your_words_card);
         quiz = findViewById(R.id.quiz_card);
         chatbot = findViewById(R.id.ai_assistant_card);
+
+        askNotificationPermission();
 
         setupSearchAutoComplete();
         setEvent();
@@ -301,6 +307,17 @@ public class MainActivity extends AppCompatActivity {
                     calendar.getTimeInMillis(),
                     pendingIntent
             );
+        }
+    }
+
+    private void askNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // API 33
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS},
+                        1001);
+            }
         }
     }
 
